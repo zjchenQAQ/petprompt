@@ -30,12 +30,14 @@ SETTINGS="$HOME/.claude/settings.json"
 
 grep -q statusLine "$SETTINGS" && pass "init wires statusline" || bad "init wires statusline"
 [ "$(grep -c 'cli\.js.*hook"' "$SETTINGS")" = "1" ] && pass "init wires one hook" || bad "init wires one hook"
+node src/cli.js config | grep -E '^[[:space:]]+mode' | grep -q marker && pass "default mode is marker" || bad "default mode is marker"
 
 node src/cli.js init >/dev/null
 [ "$(grep -c 'cli\.js.*hook"' "$SETTINGS")" = "1" ] && pass "re-init does not duplicate" || bad "re-init does not duplicate"
 
-[ -z "$(hook yes)" ] && pass "trivial prompt passed through" || bad "trivial prompt passed through"
-hook "make the login page" | grep -q additionalContext && pass "substantive -> additionalContext" || bad "substantive -> additionalContext"
+node src/cli.js mode auto >/dev/null
+[ -z "$(hook yes)" ] && pass "trivial prompt passed through (auto)" || bad "trivial prompt passed through (auto)"
+hook "make the login page" | grep -q additionalContext && pass "substantive -> additionalContext (auto)" || bad "substantive -> additionalContext (auto)"
 
 node src/cli.js mode marker >/dev/null
 [ -z "$(hook "make the login page")" ] && pass "marker mode ignores un-marked" || bad "marker mode ignores un-marked"

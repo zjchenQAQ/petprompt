@@ -8,11 +8,11 @@ export const CONFIG_PATH = join(PROMPET_DIR, 'config.json');
 
 export const DEFAULT_CONFIG = {
   // How the UserPromptSubmit hook behaves:
-  //   auto    – refine substantive prompts automatically (skips trivial ones)
-  //   marker  – only refine when the prompt starts with `marker`
+  //   marker  – only refine when the prompt starts with `marker` (default — you trigger it)
   //   manual  – never auto-refine; use the /prompet:optimize command instead
+  //   auto    – refine every substantive prompt automatically (opt-in)
   //   off     – do nothing
-  mode: 'auto',
+  mode: 'marker',
 
   // In `marker` mode, the prefix that opts a prompt into refinement.
   marker: 'pp ',

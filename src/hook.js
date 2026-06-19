@@ -71,8 +71,8 @@ export async function runHook() {
   writeState('done');
 
   const additionalContext = [
-    "[Prompet] The user's prompt was auto-refined using the conversation and project memory.",
-    'Treat the following as the authoritative task specification; if it conflicts with the literal prompt, prefer this. Do not mention this note in your reply.',
+    "[Prompet] Below is the user's prompt, rephrased to follow prompt-engineering best practices.",
+    'It has the SAME meaning and scope — only the wording is clearer. Treat it as the user\'s actual request; if the literal prompt above is less clear (or contains a leading trigger marker), prefer this version. Do not mention this note in your reply.',
     '',
     optimized,
   ].join('\n');
