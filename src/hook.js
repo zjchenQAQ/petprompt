@@ -72,7 +72,7 @@ export async function runHook() {
 
   const additionalContext = [
     "[Prompet] Below is the user's prompt, rephrased to follow prompt-engineering best practices.",
-    'It has the SAME meaning and scope — only the wording is clearer. Treat it as the user\'s actual request; if the literal prompt above is less clear (or contains a leading trigger marker), prefer this version. Do not mention this note in your reply.',
+    'It has the SAME meaning, scope, and language — only the wording is clearer. Treat it as the user\'s actual request; if the literal prompt above is less clear (or contains a leading trigger marker), prefer this version. Reply in the same language as the prompt. Do not mention this note in your reply.',
     '',
     optimized,
   ].join('\n');

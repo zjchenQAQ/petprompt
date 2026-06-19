@@ -9,13 +9,14 @@ export function buildMetaPrompt({ prompt, memory, conversation }) {
     "Rewrite the user's RAW PROMPT so it follows prompt-engineering best practices: clear, direct, specific, unambiguous, and well-structured.",
     '',
     'Hard rules:',
+    '- LANGUAGE: write the rewritten prompt in the SAME LANGUAGE as the RAW PROMPT, even when the PROJECT MEMORY and RECENT CONVERSATION below are in a different language. Chinese raw prompt -> Chinese output; English -> English; Japanese -> Japanese. Never translate it.',
     '- PRESERVE THE MEANING EXACTLY. Keep the same intent, scope, and constraints.',
     '- DO NOT add new requirements, features, steps, acceptance criteria, or details the user did not state or clearly imply. This is a REPHRASING, not an expansion.',
+    '- Preserve the user\'s uncertainty and guesses AS uncertain (keep "maybe" / "not sure" / "I think"); never turn a hypothesis into an asserted fact.',
     '- Do not pad or lengthen. The result is usually a similar length or shorter — only clearer.',
     '- Remove hedging, filler, and ambiguity; prefer precise, imperative phrasing.',
     '- Use the conversation and project memory ONLY to resolve ambiguous references (what "it" / "this" / "that" point to) and to use correct names and terminology — never to introduce new scope.',
     '- If the prompt is already clear, return it unchanged.',
-    "- Keep the user's language.",
     '- Output ONLY the rewritten prompt. No preamble, no explanation, no markdown, no code fences.',
     '',
     '== PROJECT MEMORY (context only — may be empty) ==',
@@ -27,7 +28,7 @@ export function buildMetaPrompt({ prompt, memory, conversation }) {
     '== RAW PROMPT ==',
     prompt,
     '',
-    '== REWRITTEN PROMPT (same meaning, clearer phrasing) ==',
+    '== REWRITTEN PROMPT (same meaning, SAME LANGUAGE as the raw prompt, clearer) ==',
   ].join('\n');
 }
 
