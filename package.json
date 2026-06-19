@@ -1,0 +1,46 @@
+{
+  "name": "prompet",
+  "version": "0.1.0",
+  "description": "A cute terminal pet that refines your rough prompts into great ones — using your current Claude Code session's context, memory, and model. No API key.",
+  "type": "module",
+  "bin": {
+    "prompet": "src/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "src",
+    "hooks",
+    "skills",
+    "settings.json",
+    ".claude-plugin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "doctor": "node src/cli.js doctor",
+    "optimize": "node src/cli.js optimize"
+  },
+  "keywords": [
+    "claude-code",
+    "prompt",
+    "prompt-engineering",
+    "prompt-optimizer",
+    "cli",
+    "hook",
+    "developer-tools",
+    "ai",
+    "pet"
+  ],
+  "author": "zjchenQAQ",
+  "license": "MIT",
+  "homepage": "https://github.com/zjchenQAQ/prompet#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zjchenQAQ/prompet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zjchenQAQ/prompet/issues"
+  }
+}
