@@ -1,6 +1,5 @@
 {
   "name": "prompet",
-  "version": "0.1.0",
   "description": "A cute terminal pet that refines your rough prompts using your current session's context, memory, and model. No API key.",
   "author": {
     "name": "zjchenQAQ",

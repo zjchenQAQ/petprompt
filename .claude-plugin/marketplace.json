@@ -10,7 +10,6 @@
       "name": "prompet",
       "source": "./",
       "description": "A cute terminal pet that refines your rough prompts using your current Claude Code session's context, memory, and model. No API key.",
-      "version": "0.1.0",
       "author": {
         "name": "zjchenQAQ",
         "url": "https://github.com/zjchenQAQ"
