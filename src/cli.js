@@ -5,9 +5,10 @@ import { spawnSync } from 'node:child_process';
 import { homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { readFileSync, writeFileSync, existsSync, copyFileSync, mkdirSync } from 'node:fs';
-import { loadConfig, saveConfig, DEFAULT_CONFIG, CONFIG_PATH, PROMPET_DIR } from './config.js';
+import { loadConfig, saveConfig, DEFAULT_CONFIG, CONFIG_PATH } from './config.js';
 import { readState } from './state.js';
 import { optimize } from './optimize.js';
+import { t, helpText, LANGS } from './i18n.js';
 
 const SELF = fileURLToPath(import.meta.url);
 const NODE = process.execPath;
@@ -53,33 +54,9 @@ function readJson(path, fallback) {
   }
 }
 
-const HELP = `${C.cyan('ʕ•ᴥ•ʔ Prompet')} ${C.dim('v' + VERSION)} — a cute pet that refines your prompts.
-
-${C.b('Usage:')} prompet <command>
-
-${C.b('Setup')}
-  init               Wire the hook + statusline into ~/.claude/settings.json
-  uninstall          Remove Prompet from ~/.claude/settings.json
-  doctor             Check that everything is ready
-
-${C.b('Behaviour')}
-  on                 Enable auto-refine (mode = auto)
-  off                Disable refining  (mode = off)
-  mode <m>           Set mode: auto | marker | manual | off
-  config             Print the current config
-  set <key> <value>  Set a config value (e.g. set optimizeModel claude-haiku-4-5)
-
-${C.b('Use')}
-  optimize [text]    Refine a prompt and print it (reads stdin if no text)
-  help               Show this help
-
-${C.b('Internal')} (called by Claude Code)
-  hook               Run the UserPromptSubmit hook
-  statusline         Render the statusline pet`;
-
 function printConfig() {
   const cfg = loadConfig();
-  console.log(C.b('Prompet config') + C.dim(' (' + CONFIG_PATH + ')'));
+  console.log(C.b(t('cfgTitle')) + C.dim(' (' + CONFIG_PATH + ')'));
   for (const k of Object.keys(DEFAULT_CONFIG)) {
     const v = cfg[k];
     const shown = Array.isArray(v) ? `[${v.length} pattern(s)]` : JSON.stringify(v);
@@ -89,8 +66,8 @@ function printConfig() {
 
 function setKey(key, raw) {
   if (!(key in DEFAULT_CONFIG)) {
-    console.error(C.red(`Unknown key: ${key}`));
-    console.error(C.dim('Valid keys: ' + Object.keys(DEFAULT_CONFIG).join(', ')));
+    console.error(C.red(t('unknownKey', key)));
+    console.error(C.dim(t('validKeys') + ': ' + Object.keys(DEFAULT_CONFIG).join(', ')));
     process.exit(1);
   }
   const cfg = loadConfig();
@@ -106,13 +83,24 @@ function setKey(key, raw) {
 function setMode(mode) {
   const valid = ['auto', 'marker', 'manual', 'off'];
   if (!valid.includes(mode)) {
-    console.error(C.red(`Invalid mode: ${mode}`) + C.dim(' (' + valid.join(' | ') + ')'));
+    console.error(C.red(t('invalidMode', mode)) + C.dim(' (' + valid.join(' | ') + ')'));
     process.exit(1);
   }
   const cfg = loadConfig();
   cfg.mode = mode;
   saveConfig(cfg);
   console.log(C.green('✓') + ` mode = ${mode}`);
+}
+
+function setLang(lang) {
+  if (!LANGS.includes(lang)) {
+    console.error(C.red(t('invalidLang', lang)) + C.dim(' (' + LANGS.join(' | ') + ')'));
+    process.exit(1);
+  }
+  const cfg = loadConfig();
+  cfg.lang = lang;
+  saveConfig(cfg);
+  console.log(C.green('✓') + ` lang = ${lang}`);
 }
 
 function backup(path) {
@@ -128,7 +116,6 @@ function doInit() {
   const s = readJson(SETTINGS, {});
   backup(SETTINGS);
 
-  // hooks.UserPromptSubmit
   s.hooks = s.hooks || {};
   const list = Array.isArray(s.hooks.UserPromptSubmit) ? s.hooks.UserPromptSubmit : [];
   const already = list.some(isOurHook);
@@ -137,25 +124,24 @@ function doInit() {
   }
   s.hooks.UserPromptSubmit = list;
 
-  // statusLine (warn if replacing a custom one)
   let statusNote = '';
   if (s.statusLine && !isOurStatus(s.statusLine)) {
-    statusNote = C.yellow('  ! Replaced an existing statusLine (backed up to settings.json.bak).');
+    statusNote = C.yellow('  ! ' + t('replacedStatus'));
   }
   s.statusLine = { type: 'command', command: STATUS_CMD, padding: 0 };
 
   saveConfig(loadConfig()); // ensure config dir/file exist
   writeFileSync(SETTINGS, JSON.stringify(s, null, 2) + '\n');
 
-  console.log(C.green('✓ Prompet installed into ') + SETTINGS);
-  console.log('  ' + C.dim('hook:       ') + (already ? C.dim('already present') : C.cyan('UserPromptSubmit')));
-  console.log('  ' + C.dim('statusline: ') + C.cyan('Prompet pet'));
+  console.log(C.green('✓ ' + t('installedInto') + ' ') + SETTINGS);
+  console.log('  ' + C.dim(t('hookLabel') + ' ') + (already ? C.dim(t('alreadyPresent')) : C.cyan('UserPromptSubmit')));
+  console.log('  ' + C.dim(t('statusLabel') + ' ') + C.cyan(t('statuslinePet')));
   if (statusNote) console.log(statusNote);
-  console.log(C.dim('  Restart Claude Code (or /hooks reload) to activate.'));
+  console.log(C.dim('  ' + t('restartHint')));
 }
 
 function doUninstall() {
-  if (!existsSync(SETTINGS)) return console.log(C.dim('Nothing to remove.'));
+  if (!existsSync(SETTINGS)) return console.log(C.dim(t('nothingToRemove')));
   const s = readJson(SETTINGS, {});
   backup(SETTINGS);
   if (s.hooks?.UserPromptSubmit) {
@@ -164,7 +150,7 @@ function doUninstall() {
   }
   if (isOurStatus(s.statusLine)) delete s.statusLine;
   writeFileSync(SETTINGS, JSON.stringify(s, null, 2) + '\n');
-  console.log(C.green('✓ Prompet removed from ') + SETTINGS);
+  console.log(C.green('✓ ' + t('removedFrom') + ' ') + SETTINGS);
 }
 
 function doDoctor() {
@@ -176,19 +162,16 @@ function doDoctor() {
   const statusInstalled = isOurStatus(s.statusLine);
   const ok = (b) => (b ? C.green('✓') : C.red('✗'));
 
-  console.log(C.b('ʕ•ᴥ•ʔ Prompet doctor'));
-  console.log(`  ${ok(claudeOk)} claude CLI       ${claudeOk ? C.dim((claude.stdout || '').trim()) : C.red('not found in PATH')}`);
-  console.log(`  ${ok(hookInstalled)} hook installed   ${C.dim(SETTINGS)}`);
-  console.log(`  ${ok(statusInstalled)} statusline pet`);
-  console.log(`  ${C.green('•')} mode             ${C.cyan(cfg.mode)}`);
-  console.log(`  ${C.green('•')} optimizeModel    ${C.cyan(cfg.optimizeModel)}`);
-  console.log(`  ${C.green('•')} config           ${C.dim(CONFIG_PATH)}`);
-  console.log(`  ${C.green('•')} pet state        ${C.dim(JSON.stringify(readState()))}`);
-  if (!claudeOk) console.log(C.yellow('\n  Install Claude Code first: https://claude.com/claude-code'));
-  if (!hookInstalled)
-    console.log(
-      C.yellow('\n  Not wired into settings.json. Run `prompet init`, or install the plugin via /plugin.'),
-    );
+  console.log(C.b(t('docTitle')));
+  console.log(`  ${ok(claudeOk)} ${t('docClaude')}: ${claudeOk ? C.dim((claude.stdout || '').trim()) : C.red(t('docNotFound'))}`);
+  console.log(`  ${ok(hookInstalled)} ${t('docHook')}: ${C.dim(SETTINGS)}`);
+  console.log(`  ${ok(statusInstalled)} ${t('docStatus')}`);
+  console.log(`  ${C.green('•')} ${t('docMode')}: ${C.cyan(cfg.mode)}`);
+  console.log(`  ${C.green('•')} ${t('docModel')}: ${C.cyan(cfg.optimizeModel)}`);
+  console.log(`  ${C.green('•')} ${t('docConfig')}: ${C.dim(CONFIG_PATH)}`);
+  console.log(`  ${C.green('•')} ${t('docState')}: ${C.dim(JSON.stringify(readState()))}`);
+  if (!claudeOk) console.log(C.yellow('\n  ' + t('docInstallClaude')));
+  if (!hookInstalled) console.log(C.yellow('\n  ' + t('docNotWired')));
 }
 
 async function doOptimize(args) {
@@ -196,7 +179,7 @@ async function doOptimize(args) {
   let text = args.join(' ').trim();
   if (!text) text = (await readStdin()).trim();
   if (!text) {
-    console.error(C.red('Nothing to optimize.') + C.dim(' Pass text or pipe via stdin.'));
+    console.error(C.red(t('nothingToOptimize')) + C.dim(t('nothingToOptimizeHint')));
     process.exit(1);
   }
   const result = await optimize({
@@ -207,7 +190,7 @@ async function doOptimize(args) {
     cfg,
   });
   if (!result) {
-    console.error(C.red('Optimization failed.') + C.dim(' Run `prompet doctor` to check claude.'));
+    console.error(C.red(t('optimizeFailed')) + C.dim(t('optimizeFailedHint')));
     process.exit(1);
   }
   process.stdout.write(result + '\n');
@@ -242,6 +225,13 @@ async function main() {
     case 'mode':
       setMode(args[0]);
       break;
+    case 'lang':
+      if (!args[0]) {
+        console.error(C.red(t('langUsage')));
+        process.exit(1);
+      }
+      setLang(args[0]);
+      break;
     case 'on':
       setMode('auto');
       break;
@@ -266,11 +256,11 @@ async function main() {
     case '--help':
     case '-h':
     case undefined:
-      console.log(HELP);
+      console.log(helpText(C, VERSION));
       break;
     default:
-      console.error(C.red(`Unknown command: ${cmd}`));
-      console.log(HELP);
+      console.error(C.red(t('unknownCommand', cmd)));
+      console.log(helpText(C, VERSION));
       process.exit(1);
   }
 }

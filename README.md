@@ -2,6 +2,8 @@
 
 # ʕ•ᴥ•ʔ Prompet
 
+**English** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
+
 **A cute terminal pet that quietly refines your rough prompts into great ones — using your current Claude Code session's context, memory, and model.**
 
 No API key. No separate chat. No copy‑paste round‑trips.
@@ -149,10 +151,11 @@ prompet help | version
 
 ## Roadmap
 
+- [x] Localized UI + README (English / 简体中文 / 日本語)
 - [ ] **Codex support** (`codex exec`‑based refinement) — *next update*
 - [ ] Clipboard / global‑hotkey mode for use outside coding agents
 - [ ] A before/after diff view
-- [ ] Pet personalities, skins & a 中文 version
+- [ ] Pet personalities & skins
 
 ## Contributing
 

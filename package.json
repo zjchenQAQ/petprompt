@@ -16,6 +16,8 @@
     "settings.json",
     ".claude-plugin",
     "README.md",
+    "README.zh-CN.md",
+    "README.ja.md",
     "LICENSE"
   ],
   "scripts": {

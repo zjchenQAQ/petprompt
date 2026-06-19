@@ -44,6 +44,13 @@ node src/cli.js mode auto >/dev/null
 
 echo '{}' | node src/cli.js statusline | grep -q Prompet && pass "statusline renders pet" || bad "statusline renders pet"
 
+node src/cli.js lang zh >/dev/null
+node src/cli.js help | grep -q "可爱桌宠" && pass "lang zh localizes help" || bad "lang zh localizes help"
+node src/cli.js lang auto >/dev/null
+LANG=ja_JP.UTF-8 node src/cli.js help | grep -q "ペット" && pass "auto-detects ja from \$LANG" || bad "auto-detects ja from \$LANG"
+node src/cli.js lang en >/dev/null
+node src/cli.js help | grep -q "cute pet" && pass "lang en help" || bad "lang en help"
+
 node src/cli.js uninstall >/dev/null
 grep -q statusLine "$SETTINGS" && bad "uninstall removes statusline" || pass "uninstall removes statusline"
 

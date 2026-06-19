@@ -38,6 +38,10 @@ export const DEFAULT_CONFIG = {
   // Statusline pet style (reserved for future styles).
   petStyle: 'bear',
 
+  // UI language for Prompet's own messages: auto | en | zh | ja.
+  // 'auto' follows $LC_ALL / $LANG; the refined prompt always keeps your own language.
+  lang: 'auto',
+
   // auto-mode: never refine prompts matching these (control words, commands, etc.).
   skipPatterns: [
     '^\\s*(y|n|yes|no|ok|okay|k|go|stop|wait|continue|cont|next|run( it)?|do it|sure|thx|thanks?|ty|yep|nope|undo|redo|fix it|retry|again)\\s*[.!?]*\\s*$',

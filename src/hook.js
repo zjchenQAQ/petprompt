@@ -4,6 +4,7 @@
 import { loadConfig } from './config.js';
 import { writeState } from './state.js';
 import { optimize } from './optimize.js';
+import { t } from './i18n.js';
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -83,6 +84,6 @@ export async function runHook() {
       additionalContext,
     },
   };
-  if (cfg.showNote) out.systemMessage = '✨ Prompet refined your prompt';
+  if (cfg.showNote) out.systemMessage = t('sysRefined');
   process.stdout.write(JSON.stringify(out));
 }

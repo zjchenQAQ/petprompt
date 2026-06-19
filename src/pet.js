@@ -1,4 +1,6 @@
 // The Prompet pet, rendered in the Claude Code statusline.
+import { t } from './i18n.js';
+
 const esc = (code, s) => `[${code}m${s}[0m`;
 export const dim = (s) => esc('2', s);
 export const cyan = (s) => esc('36', s);
@@ -23,10 +25,10 @@ export function renderPet(state, info = {}) {
 
   if (status === 'thinking') {
     const frame = SPIN[Math.floor(age / 90) % SPIN.length];
-    return `${magenta(FACES.thinking)} ${cyan('Prompet')} ${yellow(frame + ' refining…')}`;
+    return `${magenta(FACES.thinking)} ${cyan('Prompet')} ${yellow(frame + ' ' + t('petRefining'))}`;
   }
   if (status === 'done') {
-    return `${magenta(FACES.done)} ${cyan('Prompet')} ${green('✨ refined')}`;
+    return `${magenta(FACES.done)} ${cyan('Prompet')} ${green(t('petRefined'))}`;
   }
   const ctx = info.ctx != null ? dim(` · ctx ${info.ctx}%`) : '';
   return `${magenta(FACES.idle)} ${cyan('Prompet')}${ctx}`;
