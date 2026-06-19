@@ -17,15 +17,21 @@ No API key. No separate chat. No copy-paste round-trips. It only acts when you a
 
 ## The problem
 
-You're deep in Claude Code. You fire off a quick, rambling prompt:
+You're deep in Claude Code. You fire off a long, rambling prompt as it comes to mind:
 
-> so the users query feels kinda slow when there are lots of rows, can you look into it, maybe it's the index idk
+> ok so theres this bug i think — when a user uploads a really big CSV the whole thing just hangs and sometimes the tab crashes, idk if it's the parsing or what, can you look into the upload component, oh and it should probably show some kind of progress thing because right now you have no idea what's happening, and maybe don't load the whole file into memory at once that seems bad, also the error message when it fails is just "error" which is useless
 
-It runs better when it's phrased the way prompt engineering recommends — clear, direct, unambiguous — **without changing what you're asking for**:
+It runs better when it's phrased the way prompt engineering recommends — clear, direct, structured — **without changing what you're asking for**:
 
-> Investigate why the `users` query is slow on large row counts, and check whether the index is the cause.
+> In the CSV upload component, fix the hang and occasional tab crash that happen with very large files. Specifically:
+>
+> - Parse the file in streamed chunks instead of loading it all into memory.
+> - Show upload/parse progress to the user.
+> - Replace the generic "error" message with a meaningful one on failure.
+>
+> Start by checking whether the bottleneck is the parsing.
 
-Same request, same scope — just expressed clearly. Normally you'd stop, open another chat, paste it, ask "rewrite this as a clean prompt," wait, copy it back, and only then run it. **Every single time.**
+Every requirement above was already in the original — just buried in the ramble. Same scope, nothing added; only organized and made clear. Normally you'd stop, open another chat, paste it, ask "rewrite this as a clean prompt," wait, copy it back, and only then run it. **Every single time.**
 
 Prompet removes that whole detour. It lives *inside* your session and rewrites the prompt for you, the moment you ask.
 
