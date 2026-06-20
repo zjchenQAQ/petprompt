@@ -33,39 +33,62 @@ It runs better when it's phrased the way prompt engineering recommends — clear
 
 Every requirement above was already in the original — just buried in the ramble. Same scope, nothing added; only organized and made clear. Normally you'd stop, open another chat, paste it, ask "rewrite this as a clean prompt," wait, copy it back, and only then run it. **Every single time.**
 
-PetPrompt removes that whole detour. It lives *inside* your session and rewrites the prompt for you, the moment you ask.
+PetPrompt removes that whole detour. It lives *inside* your session and rewrites the prompt the moment you ask.
 
 ## How it works
 
-PetPrompt registers a Claude Code **`UserPromptSubmit` hook**. When you submit a prompt you've marked for refinement (by default, one that starts with `pp ` — see [Modes](#modes)):
+PetPrompt registers a Claude Code **`UserPromptSubmit` hook**. By default (`preview` mode), when you prefix a prompt with `pp `:
 
 ```
 pp your rambling prompt
         │
         ▼
-  ┌───────────┐   reads: this session's model · transcript · CLAUDE.md memory
+  ┌─────────────┐   reads: this session's model · transcript · CLAUDE.md memory
   │  PetPrompt  │ ──────────────────────────────────────────────────────────────►
-  │   hook    │   calls your installed `claude -p` (same login, model & quota)
-  └───────────┘
+  │    hook     │   calls your installed `claude -p` (same login, model & quota)
+  └─────────────┘
         │
         ▼
-  a clearer, same-meaning prompt is handed to Claude — and the pet cheers ✨
+  raw prompt is BLOCKED · clean rewrite is shown + copied to your clipboard
+        │
+        ▼
+  paste (the pet cheers ✨) + Enter  →  Claude runs the clean version
 ```
 
-- **Uses your session, not a separate brain.** The refinement runs on the *same model your
+- **Uses your session, not a separate brain.** The rewrite runs on the *same model your
   window is using*, through your existing Claude Code login — so there's **no API key** and
-  it counts against the **same quota**. (Set a faster model just for refining if you like.)
+  it counts against the **same quota**. (Set a faster model just for rewriting if you like.)
 - **Rephrases, never pads.** It rewrites your wording to follow prompt-engineering best
-  practices — clear, specific, unambiguous — while keeping your **meaning and scope
-  unchanged**. It uses the recent conversation and your `CLAUDE.md` memory only to resolve
-  ambiguous references (what "it" / "this" means) and use the right names — never to add new
-  requirements.
-- **On demand, not in your way.** PetPrompt only acts on prompts you mark; everything else
-  goes straight through. Flip it to fully automatic with `petprompt mode auto` if you prefer.
-- **Safe by design.** Claude still sees your original prompt; the rewrite is added as
-  guidance, not a silent swap. If anything fails or times out, your original prompt goes
-  through **untouched** — PetPrompt never blocks you.
-- **A pet in your statusline.** ʕ•ᴥ•ʔ idles, spins while refining, and gives a ✨ when done.
+  practices while keeping your **meaning and scope unchanged**. It uses the recent
+  conversation and your `CLAUDE.md` memory only to resolve ambiguous references (what "it" /
+  "this" means) and use the right names — never to add new requirements.
+- **You see it and approve it.** In `preview` mode your raw prompt is **blocked** (it never
+  reaches Claude), the rewrite is shown and copied to your clipboard, and you paste + Enter to
+  run it — so only the clean version, which you've read, is sent. Prefer one step?
+  `petprompt mode auto` injects the rewrite and runs immediately.
+- **Safe by design.** If anything fails or times out, your original prompt goes through
+  **untouched** — PetPrompt never gets in your way.
+- **A pet in your statusline.** Pick a character; it idles, reacts while rewriting, and
+  cheers when done.
+
+## Characters
+
+Your pet lives in the statusline. Choose from original characters — each with its own idle,
+thinking, and excited animations:
+
+```bash
+petprompt pet              # list all characters (with a preview) + show current
+petprompt pet cat          # switch character
+petprompt pet on | off     # show / hide the statusline pet
+```
+
+| Key | Character |
+| --- | --- |
+| `shiba` *(default)* | 柴犬 — loyal, a little smug; wags its tail |
+| `cat` | 猫 — aloof, but secretly cares |
+| `slime` | 史莱姆 — bouncy, easily delighted; squishes |
+| `fox` | 狐狸 — sly and quick-witted |
+| `bunny` | 兔子 — shy; hops when happy |
 
 ## Install
 
@@ -76,14 +99,21 @@ pp your rambling prompt
 /plugin install petprompt@petprompt
 ```
 
-Then restart Claude Code. That's it — hook, statusline pet, and the `/petprompt:optimize`
-command are all wired up.
+Then restart Claude Code — the hook and the `/petprompt:optimize` command are wired up.
+
+> **Enable the pet (statusline):** plugins can't register a statusline, so turn it on once:
+>
+> ```bash
+> node ~/.claude/plugins/marketplaces/petprompt/src/cli.js pet on
+> ```
+>
+> then restart Claude Code. (Rewriting works without this — the pet is just the cute part.)
 
 ### Option B — npm + one command
 
 ```bash
 npm install -g petprompt
-petprompt init       # writes the hook + statusline into ~/.claude/settings.json
+petprompt init       # writes the hook + statusline pet into ~/.claude/settings.json
 petprompt doctor     # verify everything is ready
 ```
 
@@ -91,18 +121,17 @@ petprompt doctor     # verify everything is ready
 
 ## Usage
 
-Once installed, prefix any prompt with `pp ` to have PetPrompt rewrite it before Claude runs it:
+Prefix any prompt with `pp ` to rewrite it. PetPrompt shows the clean version and copies it
+to your clipboard — **paste + Enter to run it** (your raw prompt is never sent):
 
 ```text
 pp the users query feels slow, look into it
 ```
 
-PetPrompt rewrites it into a clean, prompt-engineering-style version (same meaning) and hands
-that to Claude. Prompts **without** the marker are left completely alone — PetPrompt only acts
-when you ask it to. (Want it on for every prompt? `petprompt mode auto`.)
+Prompts **without** `pp ` are left completely alone. Want it to rewrite and run in one step
+instead? `petprompt mode auto` (it rewrites every substantive prompt automatically).
 
-Prefer to review before running? Use the preview command — it shows the rewrite without
-applying it:
+Just want to see a rewrite without running anything?
 
 ```text
 /petprompt:optimize add a dark mode toggle
@@ -121,9 +150,9 @@ Switch how the hook behaves with `petprompt mode <m>` (or `petprompt on` / `petp
 
 | Mode | Behaviour |
 | --- | --- |
-| `marker` *(default)* | Only refine prompts that start with the marker (`pp `) — you choose when. |
-| `manual` | Never auto-refine; use `/petprompt:optimize` when you want it. |
-| `auto` | Refine every substantive prompt automatically (opt-in). |
+| `preview` *(default)* | On the `pp ` marker: block the raw prompt, show the rewrite, copy it to the clipboard. You paste + Enter to run. |
+| `auto` | Rewrite every substantive prompt and inject it automatically (one step). |
+| `manual` | Never auto-run; use `/petprompt:optimize`. |
 | `off` | Do nothing. |
 
 ## Configuration
@@ -133,19 +162,20 @@ Switch how the hook behaves with `petprompt mode <m>` (or `petprompt on` / `petp
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `mode` | `marker` | `marker` · `manual` · `auto` · `off` |
+| `mode` | `preview` | `preview` · `auto` · `manual` · `off` |
+| `character` | `shiba` | Statusline pet: `shiba` · `cat` · `slime` · `fox` · `bunny` |
 | `optimizeModel` | `inherit` | `inherit` = your session model; or an id like `claude-haiku-4-5` for speed |
 | `lang` | `auto` | UI language: `auto` · `en` · `zh` · `ja` |
-| `marker` | `pp ` | Prefix that triggers refinement in `marker` mode |
+| `marker` | `pp ` | Prefix that triggers a rewrite in `preview` mode |
 | `minWords` / `minChars` | `4` / `16` | `auto` mode: skip prompts shorter than this |
 | `contextMessages` | `12` | How many recent messages to feed the rewriter |
-| `timeoutMs` | `25000` | Refinement timeout (kept under the 30s hook limit) |
-| `showNote` | `true` | Show a one-line note when a prompt is refined |
+| `timeoutMs` | `25000` | Rewrite timeout (kept under the 30s hook limit) |
+| `showNote` | `true` | Show the rewrite as a note in `auto` mode |
 
 ```bash
-petprompt set optimizeModel claude-haiku-4-5   # faster, cheaper refining
-petprompt mode auto                            # refine every substantive prompt (opt-in)
-petprompt lang en                              # force the UI language
+petprompt set optimizeModel claude-haiku-4-5   # faster, cheaper rewriting
+petprompt mode auto                            # rewrite + run in one step
+petprompt pet fox                              # change the character
 petprompt off                                   # pause PetPrompt
 ```
 
@@ -158,21 +188,23 @@ already are** — nothing goes anywhere else, and there's no third-party server 
 ## Commands
 
 ```text
-petprompt init | uninstall | doctor        setup & diagnostics
-petprompt on | off | mode <m>              behaviour
-petprompt lang <code>                      UI language (auto | en | zh | ja)
-petprompt config | set <key> <value>       configuration
-petprompt optimize [text]                  rewrite a prompt and print it
+petprompt init | uninstall | doctor          setup & diagnostics
+petprompt pet [name|on|off]                  choose character / show-hide the pet
+petprompt mode <m> | on | off                behaviour (preview | auto | manual | off)
+petprompt lang <code>                        UI language (auto | en | zh | ja)
+petprompt config | set <key> <value>         configuration
+petprompt optimize [text]                    rewrite a prompt and print it
 petprompt help | version
 ```
 
 ## Roadmap
 
 - [x] Localized UI + README (English / 简体中文 / 日本語)
-- [ ] **Codex support** (`codex exec`-based refinement) — *next update*
+- [x] Selectable, animated characters
+- [ ] **Codex support** (`codex exec`-based rewriting) — *next update*
 - [ ] Clipboard / global-hotkey mode for use outside coding agents
 - [ ] A before/after diff view
-- [ ] Pet personalities & skins
+- [ ] More characters & skins
 
 ## Star History
 
