@@ -1,9 +1,12 @@
-// UserPromptSubmit hook: decide whether to refine, do it, and inject the result as
-// additionalContext. Always fails open — on any problem the original prompt proceeds
-// untouched so Prompet can never block your workflow.
+// UserPromptSubmit hook.
+//   preview mode: on the marker prefix, rewrite the prompt, BLOCK the raw prompt (so it
+//                 never reaches Claude), show the rewrite, and copy it to the clipboard.
+//   auto mode:    rewrite every substantive prompt and inject it as additionalContext.
+// Always fails open — on any problem the original prompt proceeds untouched.
 import { loadConfig } from './config.js';
 import { writeState } from './state.js';
 import { optimize } from './optimize.js';
+import { copyToClipboard } from './clipboard.js';
 import { t } from './i18n.js';
 
 function readStdin() {
@@ -16,27 +19,36 @@ function readStdin() {
   });
 }
 
-function shouldOptimize(prompt, cfg) {
-  const p = (prompt || '').trim();
-  if (!p) return false;
-  if (cfg.mode === 'off' || cfg.mode === 'manual') return false;
-  if (cfg.mode === 'marker') return p.startsWith((cfg.marker || '').trim());
-  // auto mode
-  for (const pat of cfg.skipPatterns || []) {
-    try {
-      if (new RegExp(pat, 'i').test(p)) return false;
-    } catch {
-      /* ignore bad pattern */
-    }
+// Returns null (do nothing) or { apply: 'preview' | 'auto', text } — text is what to rewrite.
+function decideTrigger(rawPrompt, cfg) {
+  const p = (rawPrompt || '').trim();
+  if (!p) return null;
+  if (cfg.mode === 'off' || cfg.mode === 'manual') return null;
+
+  if (cfg.mode === 'preview') {
+    const marker = cfg.marker || 'pp ';
+    if (!p.startsWith(marker.trim())) return null;
+    return { apply: 'preview', text: rawPrompt.replace(/^\s*/, '').slice(marker.length) };
   }
-  const words = p.split(/\s+/).filter(Boolean).length;
-  if (p.length < cfg.minChars && words < cfg.minWords) return false;
-  return true;
+
+  if (cfg.mode === 'auto') {
+    for (const pat of cfg.skipPatterns || []) {
+      try {
+        if (new RegExp(pat, 'i').test(p)) return null;
+      } catch {
+        /* ignore bad pattern */
+      }
+    }
+    const words = p.split(/\s+/).filter(Boolean).length;
+    if (p.length < cfg.minChars && words < cfg.minWords) return null;
+    return { apply: 'auto', text: p };
+  }
+  return null;
 }
 
 export async function runHook() {
-  // Prevent recursion: our own `claude -p` child must never re-enter optimization.
-  if (process.env.PROMPET_ACTIVE) return;
+  // Prevent recursion: our own `claude -p` child must never re-enter the hook.
+  if (process.env.PETPROMPT_ACTIVE) return;
 
   let input;
   try {
@@ -46,15 +58,14 @@ export async function runHook() {
   }
 
   const cfg = loadConfig();
-  let prompt = input.prompt || '';
-  if (!shouldOptimize(prompt, cfg)) return;
-  if (cfg.mode === 'marker') prompt = prompt.slice(cfg.marker.length);
+  const trigger = decideTrigger(input.prompt, cfg);
+  if (!trigger || !trigger.text.trim()) return;
 
   writeState('thinking');
   let optimized = null;
   try {
     optimized = await optimize({
-      prompt,
+      prompt: trigger.text,
       model: input.model,
       cwd: input.cwd,
       transcriptPath: input.transcript_path,
@@ -66,24 +77,36 @@ export async function runHook() {
 
   if (!optimized) {
     writeState('idle');
-    return; // fail open
+    return; // fail open — the raw prompt proceeds untouched
   }
   writeState('done');
 
+  if (trigger.apply === 'preview') {
+    const copied = copyToClipboard(optimized);
+    const reason = [
+      '✨ ' + t('previewTitle'),
+      '',
+      optimized,
+      '',
+      copied ? t('previewCopied') : t('previewManual'),
+    ].join('\n');
+    // decision:block erases the raw prompt (it never reaches Claude) and shows `reason`.
+    process.stdout.write(JSON.stringify({ decision: 'block', reason }));
+    return;
+  }
+
+  // auto: inject the rewrite for Claude, and show it to the user.
   const additionalContext = [
-    "[Prompet] Below is the user's prompt, rephrased to follow prompt-engineering best practices.",
-    'It has the SAME meaning, scope, and language — only the wording is clearer. Treat it as the user\'s actual request; if the literal prompt above is less clear (or contains a leading trigger marker), prefer this version. Reply in the same language as the prompt. Do not mention this note in your reply.',
+    "[PetPrompt] Below is the user's prompt, rephrased to follow prompt-engineering best practices.",
+    "It has the SAME meaning, scope, and language — only the wording is clearer. Treat it as the user's actual request; if the literal prompt above is less clear, prefer this version. Reply in the same language as the prompt. Do not mention this note in your reply.",
     '',
     optimized,
   ].join('\n');
 
   const out = {
     continue: true,
-    hookSpecificOutput: {
-      hookEventName: 'UserPromptSubmit',
-      additionalContext,
-    },
+    hookSpecificOutput: { hookEventName: 'UserPromptSubmit', additionalContext },
   };
-  if (cfg.showNote) out.systemMessage = t('sysRefined');
+  if (cfg.showNote) out.systemMessage = '✨ ' + t('autoNote') + '\n' + optimized;
   process.stdout.write(JSON.stringify(out));
 }

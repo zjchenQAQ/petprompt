@@ -5,7 +5,7 @@ import { readMemory, readTranscript } from './context.js';
 
 export function buildMetaPrompt({ prompt, memory, conversation }) {
   return [
-    'You are Prompet, a prompt rewriter for AI coding agents.',
+    'You are PetPrompt, a prompt rewriter for AI coding agents.',
     "Rewrite the user's RAW PROMPT so it follows prompt-engineering best practices: clear, direct, specific, unambiguous, and well-structured.",
     '',
     'Hard rules:',
@@ -33,7 +33,7 @@ export function buildMetaPrompt({ prompt, memory, conversation }) {
 }
 
 // Invoke `claude -p` headlessly. Resolves to the trimmed text, or null on any failure
-// so callers can always fail open. PROMPET_ACTIVE guards against the hook re-triggering
+// so callers can always fail open. PETPROMPT_ACTIVE guards against the hook re-triggering
 // itself when this child process runs.
 function runClaude({ metaPrompt, model, timeoutMs }) {
   return new Promise((resolve) => {
@@ -43,7 +43,7 @@ function runClaude({ metaPrompt, model, timeoutMs }) {
     let child;
     try {
       child = spawn('claude', args, {
-        env: { ...process.env, PROMPET_ACTIVE: '1' },
+        env: { ...process.env, PETPROMPT_ACTIVE: '1' },
         stdio: ['ignore', 'pipe', 'ignore'],
       });
     } catch {

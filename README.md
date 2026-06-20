@@ -1,6 +1,6 @@
 <div align="center">
 
-# ʕ•ᴥ•ʔ Prompet
+# ʕ•ᴥ•ʔ PetPrompt
 
 **English** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
@@ -9,7 +9,7 @@
 No API key. No separate chat. No copy-paste round-trips. It only acts when you ask it to.
 
 <!-- TODO: replace with a real demo GIF -->
-<!-- ![Prompet demo](assets/demo.gif) -->
+<!-- ![PetPrompt demo](assets/demo.gif) -->
 
 </div>
 
@@ -33,18 +33,18 @@ It runs better when it's phrased the way prompt engineering recommends — clear
 
 Every requirement above was already in the original — just buried in the ramble. Same scope, nothing added; only organized and made clear. Normally you'd stop, open another chat, paste it, ask "rewrite this as a clean prompt," wait, copy it back, and only then run it. **Every single time.**
 
-Prompet removes that whole detour. It lives *inside* your session and rewrites the prompt for you, the moment you ask.
+PetPrompt removes that whole detour. It lives *inside* your session and rewrites the prompt for you, the moment you ask.
 
 ## How it works
 
-Prompet registers a Claude Code **`UserPromptSubmit` hook**. When you submit a prompt you've marked for refinement (by default, one that starts with `pp ` — see [Modes](#modes)):
+PetPrompt registers a Claude Code **`UserPromptSubmit` hook**. When you submit a prompt you've marked for refinement (by default, one that starts with `pp ` — see [Modes](#modes)):
 
 ```
 pp your rambling prompt
         │
         ▼
   ┌───────────┐   reads: this session's model · transcript · CLAUDE.md memory
-  │  Prompet  │ ──────────────────────────────────────────────────────────────►
+  │  PetPrompt  │ ──────────────────────────────────────────────────────────────►
   │   hook    │   calls your installed `claude -p` (same login, model & quota)
   └───────────┘
         │
@@ -60,11 +60,11 @@ pp your rambling prompt
   unchanged**. It uses the recent conversation and your `CLAUDE.md` memory only to resolve
   ambiguous references (what "it" / "this" means) and use the right names — never to add new
   requirements.
-- **On demand, not in your way.** Prompet only acts on prompts you mark; everything else
-  goes straight through. Flip it to fully automatic with `prompet mode auto` if you prefer.
+- **On demand, not in your way.** PetPrompt only acts on prompts you mark; everything else
+  goes straight through. Flip it to fully automatic with `petprompt mode auto` if you prefer.
 - **Safe by design.** Claude still sees your original prompt; the rewrite is added as
   guidance, not a silent swap. If anything fails or times out, your original prompt goes
-  through **untouched** — Prompet never blocks you.
+  through **untouched** — PetPrompt never blocks you.
 - **A pet in your statusline.** ʕ•ᴥ•ʔ idles, spins while refining, and gives a ✨ when done.
 
 ## Install
@@ -72,64 +72,64 @@ pp your rambling prompt
 ### Option A — Claude Code plugin (recommended)
 
 ```text
-/plugin marketplace add zjchenQAQ/prompet
-/plugin install prompet@prompet
+/plugin marketplace add zjchenQAQ/petprompt
+/plugin install petprompt@petprompt
 ```
 
-Then restart Claude Code. That's it — hook, statusline pet, and the `/prompet:optimize`
+Then restart Claude Code. That's it — hook, statusline pet, and the `/petprompt:optimize`
 command are all wired up.
 
 ### Option B — npm + one command
 
 ```bash
-npm install -g prompet
-prompet init       # writes the hook + statusline into ~/.claude/settings.json
-prompet doctor     # verify everything is ready
+npm install -g petprompt
+petprompt init       # writes the hook + statusline into ~/.claude/settings.json
+petprompt doctor     # verify everything is ready
 ```
 
 > Requires **Node.js ≥ 18** and the **Claude Code CLI** (`claude`) on your PATH.
 
 ## Usage
 
-Once installed, prefix any prompt with `pp ` to have Prompet rewrite it before Claude runs it:
+Once installed, prefix any prompt with `pp ` to have PetPrompt rewrite it before Claude runs it:
 
 ```text
 pp the users query feels slow, look into it
 ```
 
-Prompet rewrites it into a clean, prompt-engineering-style version (same meaning) and hands
-that to Claude. Prompts **without** the marker are left completely alone — Prompet only acts
-when you ask it to. (Want it on for every prompt? `prompet mode auto`.)
+PetPrompt rewrites it into a clean, prompt-engineering-style version (same meaning) and hands
+that to Claude. Prompts **without** the marker are left completely alone — PetPrompt only acts
+when you ask it to. (Want it on for every prompt? `petprompt mode auto`.)
 
 Prefer to review before running? Use the preview command — it shows the rewrite without
 applying it:
 
 ```text
-/prompet:optimize add a dark mode toggle
+/petprompt:optimize add a dark mode toggle
 ```
 
 Or from any shell:
 
 ```bash
-prompet optimize "add a dark mode toggle"
-echo "add a dark mode toggle" | prompet optimize
+petprompt optimize "add a dark mode toggle"
+echo "add a dark mode toggle" | petprompt optimize
 ```
 
 ## Modes
 
-Switch how the hook behaves with `prompet mode <m>` (or `prompet on` / `prompet off`):
+Switch how the hook behaves with `petprompt mode <m>` (or `petprompt on` / `petprompt off`):
 
 | Mode | Behaviour |
 | --- | --- |
 | `marker` *(default)* | Only refine prompts that start with the marker (`pp `) — you choose when. |
-| `manual` | Never auto-refine; use `/prompet:optimize` when you want it. |
+| `manual` | Never auto-refine; use `/petprompt:optimize` when you want it. |
 | `auto` | Refine every substantive prompt automatically (opt-in). |
 | `off` | Do nothing. |
 
 ## Configuration
 
-`prompet config` prints everything; `prompet set <key> <value>` changes it. Stored at
-`~/.claude/prompet/config.json`.
+`petprompt config` prints everything; `petprompt set <key> <value>` changes it. Stored at
+`~/.claude/petprompt/config.json`.
 
 | Key | Default | Meaning |
 | --- | --- | --- |
@@ -143,27 +143,27 @@ Switch how the hook behaves with `prompet mode <m>` (or `prompet on` / `prompet 
 | `showNote` | `true` | Show a one-line note when a prompt is refined |
 
 ```bash
-prompet set optimizeModel claude-haiku-4-5   # faster, cheaper refining
-prompet mode auto                            # refine every substantive prompt (opt-in)
-prompet lang en                              # force the UI language
-prompet off                                   # pause Prompet
+petprompt set optimizeModel claude-haiku-4-5   # faster, cheaper refining
+petprompt mode auto                            # refine every substantive prompt (opt-in)
+petprompt lang en                              # force the UI language
+petprompt off                                   # pause PetPrompt
 ```
 
 ## Privacy
 
-Prompet runs entirely on your machine and talks only to your own `claude` CLI. Your prompt,
+PetPrompt runs entirely on your machine and talks only to your own `claude` CLI. Your prompt,
 recent conversation, and memory are sent to Claude **the same way your normal prompts
 already are** — nothing goes anywhere else, and there's no third-party server or key.
 
 ## Commands
 
 ```text
-prompet init | uninstall | doctor        setup & diagnostics
-prompet on | off | mode <m>              behaviour
-prompet lang <code>                      UI language (auto | en | zh | ja)
-prompet config | set <key> <value>       configuration
-prompet optimize [text]                  rewrite a prompt and print it
-prompet help | version
+petprompt init | uninstall | doctor        setup & diagnostics
+petprompt on | off | mode <m>              behaviour
+petprompt lang <code>                      UI language (auto | en | zh | ja)
+petprompt config | set <key> <value>       configuration
+petprompt optimize [text]                  rewrite a prompt and print it
+petprompt help | version
 ```
 
 ## Roadmap
@@ -176,17 +176,17 @@ prompet help | version
 
 ## Star History
 
-<a href="https://star-history.com/#zjchenQAQ/prompet&Date">
+<a href="https://star-history.com/#zjchenQAQ/petprompt&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=zjchenQAQ/prompet&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=zjchenQAQ/prompet&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=zjchenQAQ/prompet&type=Date" width="600" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=zjchenQAQ/petprompt&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=zjchenQAQ/petprompt&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=zjchenQAQ/petprompt&type=Date" width="600" />
   </picture>
 </a>
 
 ## Contributing
 
-Issues and PRs welcome. Prompet is intentionally **zero-dependency, pure Node** so the hook
+Issues and PRs welcome. PetPrompt is intentionally **zero-dependency, pure Node** so the hook
 stays fast and installs anywhere.
 
 ## License

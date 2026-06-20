@@ -1,4 +1,4 @@
-// Reconstruct the "what Prompet knows" context: project memory + recent conversation.
+// Reconstruct the "what PetPrompt knows" context: project memory + recent conversation.
 // Everything is budgeted to keep the refinement call fast and cheap.
 import { homedir } from 'node:os';
 import { join } from 'node:path';

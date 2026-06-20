@@ -1,10 +1,10 @@
 {
-  "name": "prompet",
+  "name": "petprompt",
   "version": "0.1.0",
   "description": "A cute terminal pet that refines your rough prompts into great ones — using your current Claude Code session's context, memory, and model. No API key.",
   "type": "module",
   "bin": {
-    "prompet": "src/cli.js"
+    "petprompt": "src/cli.js"
   },
   "engines": {
     "node": ">=18"
@@ -37,12 +37,12 @@
   ],
   "author": "zjchenQAQ",
   "license": "MIT",
-  "homepage": "https://github.com/zjchenQAQ/prompet#readme",
+  "homepage": "https://github.com/zjchenQAQ/petprompt#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zjchenQAQ/prompet.git"
+    "url": "git+https://github.com/zjchenQAQ/petprompt.git"
   },
   "bugs": {
-    "url": "https://github.com/zjchenQAQ/prompet/issues"
+    "url": "https://github.com/zjchenQAQ/petprompt/issues"
   }
 }

@@ -1,11 +1,11 @@
 ---
 name: optimize
-description: Rephrase a rough prompt to follow prompt-engineering best practices WITHOUT changing its meaning, then show it for review without executing. Use when the user runs /prompet:optimize or asks to rewrite/clean up/optimize their prompt before running it.
+description: Rephrase a rough prompt to follow prompt-engineering best practices WITHOUT changing its meaning, then show it for review without executing. Use when the user runs /petprompt:optimize or asks to rewrite/clean up/optimize their prompt before running it.
 ---
 
-# Prompet — optimize a prompt (preview mode)
+# PetPrompt — optimize a prompt (preview mode)
 
-This is the manual, preview counterpart to Prompet's hook. The user wants to SEE a cleaner
+This is the manual, preview counterpart to PetPrompt's hook. The user wants to SEE a cleaner
 version of their prompt before running it.
 
 When invoked:

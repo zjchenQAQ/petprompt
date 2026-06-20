@@ -1,13 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "prompet",
+  "name": "petprompt",
   "owner": {
     "name": "zjchenQAQ"
   },
-  "description": "Prompet — a cute terminal pet that refines your prompts.",
+  "description": "PetPrompt — a cute terminal pet that refines your prompts.",
   "plugins": [
     {
-      "name": "prompet",
+      "name": "petprompt",
       "source": "./",
       "description": "A cute terminal pet that refines your rough prompts using your current Claude Code session's context, memory, and model. No API key.",
       "author": {

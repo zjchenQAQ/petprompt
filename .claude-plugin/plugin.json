@@ -1,11 +1,11 @@
 {
-  "name": "prompet",
+  "name": "petprompt",
   "description": "A cute terminal pet that refines your rough prompts using your current session's context, memory, and model. No API key.",
   "author": {
     "name": "zjchenQAQ",
     "url": "https://github.com/zjchenQAQ"
   },
-  "homepage": "https://github.com/zjchenQAQ/prompet",
+  "homepage": "https://github.com/zjchenQAQ/petprompt",
   "license": "MIT",
   "keywords": ["prompt", "prompt-optimizer", "hook", "statusline", "pet", "developer-tools"]
 }

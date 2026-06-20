@@ -1,6 +1,7 @@
-// Statusline command: render the Prompet pet, reflecting the hook's current state.
+// Statusline command: render the PetPrompt character, reflecting the hook's current state.
 import { readState } from './state.js';
 import { renderPet } from './pet.js';
+import { loadConfig } from './config.js';
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -20,6 +21,7 @@ export async function runStatusline() {
     /* statusline still renders without info */
   }
   const state = readState();
+  const cfg = loadConfig();
   const ctx = info?.context_window?.used_percentage;
-  process.stdout.write(renderPet(state, { ctx }));
+  process.stdout.write(renderPet(state, { ctx, character: cfg.character }));
 }

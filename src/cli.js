@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Prompet CLI: single entry point for the hook, the statusline, config, and install.
+// PetPrompt CLI: single entry point for the hook, the statusline, config, and install.
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { homedir } from 'node:os';
@@ -9,6 +9,8 @@ import { loadConfig, saveConfig, DEFAULT_CONFIG, CONFIG_PATH } from './config.js
 import { readState } from './state.js';
 import { optimize } from './optimize.js';
 import { t, helpText, LANGS } from './i18n.js';
+import { CHARACTERS, characterKeys } from './characters.js';
+import { renderPet } from './pet.js';
 
 const SELF = fileURLToPath(import.meta.url);
 const NODE = process.execPath;
@@ -17,7 +19,7 @@ const HOOK_CMD = `"${NODE}" "${SELF}" hook`;
 const STATUS_CMD = `"${NODE}" "${SELF}" statusline`;
 const VERSION = '0.1.0';
 
-// Identify Prompet's own entries by their command referencing this cli.js (robust to
+// Identify PetPrompt's own entries by their command referencing this cli.js (robust to
 // JSON escaping and node-path changes, unlike stringify+substring matching).
 const isOurHook = (e) =>
   Array.isArray(e?.hooks) &&
@@ -81,7 +83,7 @@ function setKey(key, raw) {
 }
 
 function setMode(mode) {
-  const valid = ['auto', 'marker', 'manual', 'off'];
+  const valid = ['preview', 'auto', 'manual', 'off'];
   if (!valid.includes(mode)) {
     console.error(C.red(t('invalidMode', mode)) + C.dim(' (' + valid.join(' | ') + ')'));
     process.exit(1);
@@ -196,6 +198,49 @@ async function doOptimize(args) {
   process.stdout.write(result + '\n');
 }
 
+function setCharacter(name) {
+  if (!characterKeys().includes(name)) {
+    console.error(C.red('Unknown character: ' + name) + C.dim(' (' + characterKeys().join(' | ') + ')'));
+    process.exit(1);
+  }
+  const cfg = loadConfig();
+  cfg.character = name;
+  saveConfig(cfg);
+  console.log(C.green('✓') + ` character = ${name}`);
+  console.log(renderPet({ status: 'done', ts: Date.now() }, { character: name }));
+}
+
+// Wire only the statusline (the pet) into ~/.claude/settings.json. Plugin users use this
+// because plugins cannot register a statusline themselves.
+function wireStatusline(enable) {
+  mkdirSync(dirname(SETTINGS), { recursive: true });
+  const s = readJson(SETTINGS, {});
+  backup(SETTINGS);
+  if (enable) s.statusLine = { type: 'command', command: STATUS_CMD, padding: 0 };
+  else if (isOurStatus(s.statusLine)) delete s.statusLine;
+  saveConfig(loadConfig());
+  writeFileSync(SETTINGS, JSON.stringify(s, null, 2) + '\n');
+  console.log(C.green('✓') + (enable ? ' pet statusline enabled ' : ' pet statusline removed ') + C.dim(SETTINGS));
+  if (enable) console.log(C.dim('  ' + t('restartHint')));
+}
+
+function doPet(args) {
+  const sub = args[0];
+  if (sub === 'on' || sub === 'enable') return wireStatusline(true);
+  if (sub === 'off' || sub === 'disable') return wireStatusline(false);
+  if (sub && sub !== 'list') return setCharacter(sub);
+
+  const cfg = loadConfig();
+  console.log(C.b('PetPrompt characters') + C.dim('  (current: ' + cfg.character + ')'));
+  for (const k of characterKeys()) {
+    const cur = k === cfg.character ? C.green('  ◀ current') : '';
+    console.log('\n' + C.cyan(k) + C.dim('  ' + CHARACTERS[k].name + ' — ' + CHARACTERS[k].blurb) + cur);
+    console.log(renderPet({ status: 'idle', ts: Date.now() }, { character: k }));
+  }
+  console.log(C.dim('\n  petprompt pet <name>    choose a character'));
+  console.log(C.dim('  petprompt pet on|off    show/hide the statusline pet'));
+}
+
 async function main() {
   const [cmd, ...args] = process.argv.slice(2);
   switch (cmd) {
@@ -217,7 +262,7 @@ async function main() {
       break;
     case 'set':
       if (args.length < 2) {
-        console.error(C.red('Usage: prompet set <key> <value>'));
+        console.error(C.red('Usage: petprompt set <key> <value>'));
         process.exit(1);
       }
       setKey(args[0], args.slice(1).join(' '));
@@ -233,10 +278,14 @@ async function main() {
       setLang(args[0]);
       break;
     case 'on':
-      setMode('auto');
+      setMode('preview');
       break;
     case 'off':
       setMode('off');
+      break;
+    case 'pet':
+    case 'character':
+      doPet(args);
       break;
     case 'init':
       doInit();
@@ -250,7 +299,7 @@ async function main() {
     case 'version':
     case '--version':
     case '-v':
-      console.log('prompet ' + VERSION);
+      console.log('petprompt ' + VERSION);
       break;
     case 'help':
     case '--help':

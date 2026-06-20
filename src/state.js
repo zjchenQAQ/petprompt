@@ -3,7 +3,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
-const DIR = join(homedir(), '.claude', 'prompet');
+const DIR = join(homedir(), '.claude', 'petprompt');
 const STATE_PATH = join(DIR, 'state.json');
 
 // status: 'idle' | 'thinking' | 'done'
