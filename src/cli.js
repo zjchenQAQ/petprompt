@@ -13,7 +13,9 @@ import { CHARACTERS, characterKeys } from './characters.js';
 import { renderPet } from './pet.js';
 
 const SELF = fileURLToPath(import.meta.url);
-const NODE = process.execPath;
+// Use bare `node` (resolved from PATH in the hook/statusline exec environment) rather than
+// process.execPath, so the wiring survives Node upgrades / version-pinned paths.
+const NODE = 'node';
 const SETTINGS = join(homedir(), '.claude', 'settings.json');
 const HOOK_CMD = `"${NODE}" "${SELF}" hook`;
 const STATUS_CMD = `"${NODE}" "${SELF}" statusline`;
