@@ -169,9 +169,9 @@ ${C.b('安装')}
   doctor             检查是否准备就绪
 
 ${C.b('行为')}
-  on                 开启自动优化（mode = auto）
-  off                关闭优化（mode = off）
-  mode <m>           设置模式：auto | marker | manual | off
+  pet [名字|on|off]  选择桌宠角色 / 显示或隐藏状态栏桌宠
+  mode <m>           模式：preview | auto | manual | off
+  on / off           开启(preview) / 关闭
   lang <code>        界面语言：auto | en | zh | ja
   config             打印当前配置
   set <键> <值>      设置某项配置（如 set optimizeModel claude-haiku-4-5）
@@ -195,9 +195,9 @@ ${C.b('セットアップ')}
   doctor             準備が整っているか確認
 
 ${C.b('動作')}
-  on                 自動最適化を有効化（mode = auto）
-  off                最適化を無効化（mode = off）
-  mode <m>           モード設定: auto | marker | manual | off
+  pet [名前|on|off]  キャラクター選択 / ステータスラインの表示・非表示
+  mode <m>           モード: preview | auto | manual | off
+  on / off           有効化(preview) / 無効化
   lang <code>        表示言語: auto | en | zh | ja
   config             現在の設定を表示
   set <key> <value>  設定値を変更（例: set optimizeModel claude-haiku-4-5）
@@ -220,9 +220,9 @@ ${C.b('Setup')}
   doctor             Check that everything is ready
 
 ${C.b('Behaviour')}
-  on                 Enable auto-refine (mode = auto)
-  off                Disable refining  (mode = off)
-  mode <m>           Set mode: auto | marker | manual | off
+  pet [name|on|off]  Choose a character / show or hide the statusline pet
+  mode <m>           Set mode: preview | auto | manual | off
+  on / off           Enable (preview) / disable
   lang <code>        UI language: auto | en | zh | ja
   config             Print the current config
   set <key> <value>  Set a config value (e.g. set optimizeModel claude-haiku-4-5)
