@@ -4,12 +4,16 @@
 
 [English](README.md) · **简体中文** · [日本語](README.ja.md)
 
+[![npm](https://img.shields.io/npm/v/petprompt?logo=npm&color=cb3837)](https://www.npmjs.com/package/petprompt)
+[![GitHub stars](https://img.shields.io/github/stars/zjchenQAQ/petprompt?style=flat&logo=github)](https://github.com/zjchenQAQ/petprompt/stargazers)
+[![CI](https://github.com/zjchenQAQ/petprompt/actions/workflows/ci.yml/badge.svg)](https://github.com/zjchenQAQ/petprompt/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **一只住在终端里的可爱桌宠，把你的 prompt 改写成更符合 prompt engineering 规范的版本 —— 意思不变、表达更清晰 —— 用你当前 Claude Code 会话的上下文、记忆和模型。**
 
 无需 API key，无需另开对话，无需来回复制粘贴。只在你主动触发时才动手。
 
-<!-- TODO: 替换为真实的演示 GIF -->
-<!-- ![PetPrompt demo](assets/demo.gif) -->
+![PetPrompt demo](assets/demo.gif)
 
 </div>
 

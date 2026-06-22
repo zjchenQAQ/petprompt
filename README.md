@@ -4,12 +4,16 @@
 
 **English** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
+[![npm](https://img.shields.io/npm/v/petprompt?logo=npm&color=cb3837)](https://www.npmjs.com/package/petprompt)
+[![GitHub stars](https://img.shields.io/github/stars/zjchenQAQ/petprompt?style=flat&logo=github)](https://github.com/zjchenQAQ/petprompt/stargazers)
+[![CI](https://github.com/zjchenQAQ/petprompt/actions/workflows/ci.yml/badge.svg)](https://github.com/zjchenQAQ/petprompt/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **A cute terminal pet that rewrites your prompts to follow prompt-engineering best practices — same meaning, clearer wording — using your current Claude Code session's context, memory, and model.**
 
 No API key. No separate chat. No copy-paste round-trips. It only acts when you ask it to.
 
-<!-- TODO: replace with a real demo GIF -->
-<!-- ![PetPrompt demo](assets/demo.gif) -->
+![PetPrompt demo](assets/demo.gif)
 
 </div>
 

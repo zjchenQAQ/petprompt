@@ -259,6 +259,11 @@ async function main() {
     case 'optimize':
       await doOptimize(args);
       break;
+    case 'demo': {
+      const { runDemo } = await import('./demo.js');
+      await runDemo();
+      break;
+    }
     case 'config':
       printConfig();
       break;

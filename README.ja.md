@@ -4,12 +4,16 @@
 
 [English](README.md) · [简体中文](README.zh-CN.md) · **日本語**
 
+[![npm](https://img.shields.io/npm/v/petprompt?logo=npm&color=cb3837)](https://www.npmjs.com/package/petprompt)
+[![GitHub stars](https://img.shields.io/github/stars/zjchenQAQ/petprompt?style=flat&logo=github)](https://github.com/zjchenQAQ/petprompt/stargazers)
+[![CI](https://github.com/zjchenQAQ/petprompt/actions/workflows/ci.yml/badge.svg)](https://github.com/zjchenQAQ/petprompt/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **ターミナルに住む可愛いペット。あなたのプロンプトを、プロンプトエンジニアリングの作法に沿った形へ書き換えます —— 意味はそのまま、表現だけ明確に —— 今の Claude Code セッションの文脈・メモリ・モデルを使って。**
 
 API キー不要。別のチャットも不要。コピペの往復もなし。あなたが頼んだときだけ動きます。
 
-<!-- TODO: 実際のデモ GIF に差し替え -->
-<!-- ![PetPrompt demo](assets/demo.gif) -->
+![PetPrompt demo](assets/demo.gif)
 
 </div>
 
