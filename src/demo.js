@@ -10,6 +10,7 @@ const col = (code, s) => `${ESC}[${code}m${s}${ESC}[0m`;
 const dim = (s) => col('2', s);
 const cyan = (s) => col('36', s);
 const bold = (s) => col('1', s);
+const amber = (s) => col('38;5;214', s); // matches Claude Code's amber hook message
 
 const w = (s) => process.stdout.write(s);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -45,10 +46,12 @@ export async function runDemo() {
   await sleep(1300);
   w('\r' + ESC + '[K');
 
-  // 3) the EXACT card the hook shows (pet + rewrite + copied) — static, like the real thing
+  // 3) the EXACT card the hook shows. In Claude Code this is an amber hook message, so we
+  //    render it amber (and with the real "blocked by hook" line) to match what you see.
+  w('  ' + amber('● UserPromptSubmit operation blocked by hook:') + '\n');
   const card = renderRewriteCard({ optimized: CLEAN, copied: true, character: cfg.character });
   for (const line of card.split('\n')) {
-    w('  ' + (line.startsWith('──') ? dim(line) : line) + '\n');
+    w('     ' + amber(line) + '\n');
     await sleep(45);
   }
 
