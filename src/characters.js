@@ -1,116 +1,116 @@
 // PetPrompt characters — all original art (no third-party IP).
 //
-// Each character maps a STATE to an array of FRAMES; each frame is an array of text
-// lines rendered top-to-bottom in the statusline. The renderer cycles frames to animate
-// and appends a status label to the last (face) line. Give each character its own
-// personality through distinct frames per state.
+// Each character maps a STATE to an array of FRAMES; each frame is an array of text lines
+// rendered top-to-bottom in the statusline. The renderer cycles frames to animate and
+// appends a status label to the last line. Each character has its own ears / eyes / paws or
+// tail and its own reactions, so it reads as a distinct, expressive little creature.
 //
-// States: idle (gentle loop + a blink), think (while refining), done (excited reaction),
+// States: idle (gentle loop + blink/look), think (while rewriting), done (excited reaction),
 // sleep (after a long idle).
 
 export const CHARACTERS = {
   shiba: {
     name: '柴犬 Shiba',
-    blurb: 'loyal, a little smug; wags its tail',
+    blurb: 'loyal pup; wags its tail, ears flop when sleepy',
     states: {
       idle: [
-        ['∪   ∪', '(●ᴥ●)'],
-        ['∪   ∪', '(●ᴥ●)U'],
-        ['∪   ∪', '(˘ᴥ˘)'],
+        ['U     U', '( ◕ᴥ◕ )', ' \\___/'],
+        ['U     U', '( -ᴥ- )', ' \\___/'], // blink
+        ['U     U', '( ◕ᴥ◕ )', ' \\___/ ~'], // tail wag
       ],
       think: [
-        ['∪   ∪', '(・ᴥ・)?'],
-        ['∪   ∪', '(・ᴥ・).'],
+        ['U     U', '( ◕ᴥ◕ )?', ' \\___/'],
+        ['U     U', '( ·ᴥ· )', ' \\___/'],
       ],
       done: [
-        ['∪ ! ∪', '٩(＾ᴥ＾)و✨'],
-        ['∪   ∪', '(＾ᴥ＾)U✨'],
+        ['U  !  U', '( ＾ᴥ＾ )', ' \\___/ ✨'],
+        ['\\     /', '( ＾ᴥ＾ )', ' \\_♥_/ ✨'],
       ],
-      sleep: [['▽   ▽', '(˘ᴥ˘) zZ']],
+      sleep: [['n     n', '( -ᴥ- )', ' \\___/ z']],
     },
   },
 
   cat: {
     name: '猫 Cat',
-    blurb: 'aloof, but secretly cares',
+    blurb: 'aloof; flicks an ear, purrs when it cares',
     states: {
       idle: [
-        ['/\\_/\\', '(=・ω・=)'],
-        ['/\\_/\\', '(=-ω-=)'],
-        ['/\\_/\\', '(=・ω・=)ﾉ'],
+        ['/\\_/\\', '( o.o )', ' > ^ <'],
+        ['/\\_/\\', '( -.- )', ' > ^ <'], // blink
+        ['/\\_/\\', '( o.O )', ' > ^ <'], // look
       ],
       think: [
-        ['/\\_/\\', '(=・ω・=)?'],
-        ['/\\_/\\', '(=・ω・=).'],
+        ['/\\_/\\', '( o.o )?', ' > ^ <'],
+        ['/\\_/\\', '( ·_· )', ' > ^ <'],
       ],
       done: [
-        ['/\\_/\\', '(=^ω^=)✨'],
-        ['/\\!/\\', '٩(=^ω^=)و✨'],
+        ['/\\_/\\', '( ^.^ )', ' >‿< ✨'],
+        ['/\\_/\\', '( ^o^ )', ' ♪ ♪ '],
       ],
-      sleep: [['/\\_/\\', '(=-ω-=) zZ']],
-    },
-  },
-
-  slime: {
-    name: '史莱姆 Slime',
-    blurb: 'bouncy, easily delighted; squishes',
-    states: {
-      idle: [
-        [' ▁▁▁ ', '(˘ ω ˘)'],
-        ['  ▁  ', '(˘ ω ˘)'],
-        [' ▁▁▁ ', '(˘ ‿ ˘)'],
-      ],
-      think: [
-        [' ▁▁▁ ', '(・ ω ・)?'],
-        [' ▁▁▁ ', '(・ ω ・).'],
-      ],
-      done: [
-        ['*▁▁▁*', '(˃ ω ˂)✨'],
-        [' ^^^ ', '٩(˃ ω ˂)و✨'],
-      ],
-      sleep: [[' ~~~ ', '(˘ ﹏ ˘) zZ']],
-    },
-  },
-
-  fox: {
-    name: '狐狸 Fox',
-    blurb: 'sly and quick-witted',
-    states: {
-      idle: [
-        ['▲   ▲', '( •ω• )'],
-        ['▲   ▲', '( -ω- )'],
-        ['▲   ▲', '( •ω• )ﾉ'],
-      ],
-      think: [
-        ['▲   ▲', '( •ω• )?'],
-        ['▲   ▲', '( •ω• ).'],
-      ],
-      done: [
-        ['▲ ! ▲', '( ＞ω＜ )✨'],
-        ['▲   ▲', '٩( ＞ω＜ )و✨'],
-      ],
-      sleep: [['▿   ▿', '( -ω- ) zZ']],
+      sleep: [['/\\_/\\', '( =.= )', ' zzZ ']],
     },
   },
 
   bunny: {
     name: '兔子 Bunny',
-    blurb: 'shy; hops when happy',
+    blurb: 'shy; ears perk up, hops when happy',
     states: {
       idle: [
-        ['(\\(\\', '( •ㅅ• )'],
-        ['(\\(\\', '( -ㅅ- )'],
-        ['(\\(\\', '( •ㅅ• )♡'],
+        ['(\\_/)', '( •ᴥ• )', 'c(")(")'],
+        ['(\\_/)', '( -ᴥ- )', 'c(")(")'], // blink
+        ['(\\_/)', '( •ᴥ• )♡', 'c(")(")'],
       ],
       think: [
-        ['(\\(\\', '( •ㅅ• )?'],
-        ['(\\(\\', '( ・ㅅ・).'],
+        ['(\\_/)', '( •ᴥ• )?', 'c(")(")'],
+        ['(\\_/)', '( ·ᴥ· )', 'c(")(")'],
       ],
       done: [
-        ['(\\(\\', '( ◕ᴗ◕ )✨'],
-        [')\\)\\', '⸜( ◕ᴗ◕ )⸝✨'],
+        ['(\\_/)', '( >ᴥ< )', 'c(")(") ✨'],
+        ['(\\_/) ', '( ^ᴥ^ )', '  ⌒⌒ ✨'], // mid-hop
       ],
-      sleep: [['(\\(\\', '( ˘ㅅ˘ ) zZ']],
+      sleep: [['(\\_/)', '( -ᴥ- )', ' zzZ ']],
+    },
+  },
+
+  slime: {
+    name: '史莱姆 Slime',
+    blurb: 'gooey blob; squishes, jiggles with joy',
+    states: {
+      idle: [
+        [' ╭───╮', '( ˘ ᵕ ˘ )', ' ╰───╯'],
+        ['  ╭─╮ ', '( ˘ ᵕ ˘ )', ' ╰───╯'], // squish
+        [' ╭───╮', '( ˘ ‿ ˘ )', ' ╰───╯'],
+      ],
+      think: [
+        [' ╭───╮', '( ·ᵕ· )?', ' ╰───╯'],
+        [' ╭───╮', '( ·ᵕ· )', ' ╰───╯'],
+      ],
+      done: [
+        [' ╭───╮', '( ˃ ᵕ ˂ )', ' ╰───╯ ✨'],
+        [' ╭✦──╮', '( ˃ ᵕ ˂ )', ' ╰───╯ ✨'],
+      ],
+      sleep: [[' ╭───╮', '( ˘ ~ ˘ )', ' ╰───╯ z']],
+    },
+  },
+
+  fox: {
+    name: '狐狸 Fox',
+    blurb: 'sly; sharp ears, swishes its tail',
+    states: {
+      idle: [
+        ['▲     ▲', '( ◔ ω ◔ )', ' ╰─~──╯'],
+        ['▲     ▲', '( - ω - )', ' ╰─~──╯'], // blink
+        ['▲     ▲', '( ◔ ω ◔ )', ' ╰──~─╯'], // tail swish
+      ],
+      think: [
+        ['▲     ▲', '( ◔ ω ◔ )?', ' ╰─~──╯'],
+        ['▲     ▲', '( · ω · )', ' ╰─~──╯'],
+      ],
+      done: [
+        ['▲  !  ▲', '( ◕ ω ◕ )', ' ╰─~──╯ ✨'],
+        ['▲     ▲', '( ˃ ω ˂ )', ' ╰─~──╯ ✨'],
+      ],
+      sleep: [['▽     ▽', '( ˘ ω ˘ )', ' ╰─~──╯ z']],
     },
   },
 };

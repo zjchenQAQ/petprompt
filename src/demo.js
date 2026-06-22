@@ -39,7 +39,7 @@ export async function runDemo() {
   const ch = CHARACTERS[cfg.character] || CHARACTERS[DEFAULT_CHARACTER];
 
   w(ESC + '[2J' + ESC + '[H'); // clear screen
-  w('\n  ' + magenta('ʕ•ᴥ•ʔ') + '  ' + bold('PetPrompt') + dim(' — a cute pet that fixes your prompts') + '\n\n');
+  w('\n  ' + bold(cyan('PetPrompt')) + dim('  ·  a cute pet that fixes your prompts') + '\n\n');
 
   // 1) you fire off a messy prompt with the `pp ` prefix
   w('  ' + dim('›') + ' ');
