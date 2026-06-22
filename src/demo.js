@@ -1,21 +1,19 @@
-// `petprompt demo` — a self-contained, scripted playback of the pp flow (no claude, no
-// network). It doubles as the source for the README GIF (record with assets/demo.tape) and
-// as a zero-setup "see the vibe" command (npx petprompt demo).
-import { CHARACTERS, DEFAULT_CHARACTER } from './characters.js';
+// `petprompt demo` — a self-contained playback of the REAL pp flow (no claude, no network):
+// you type a messy prompt, it's rewritten, and the exact result card the hook shows appears.
+// It uses the same renderRewriteCard() as the live hook, so the demo == the real experience.
+// Doubles as the README GIF source (assets/demo.tape) and a zero-setup `npx petprompt demo`.
 import { loadConfig } from './config.js';
+import { renderRewriteCard } from './pet.js';
 
 const ESC = String.fromCharCode(27);
 const col = (code, s) => `${ESC}[${code}m${s}${ESC}[0m`;
 const dim = (s) => col('2', s);
 const cyan = (s) => col('36', s);
-const green = (s) => col('32', s);
-const yellow = (s) => col('33', s);
-const magenta = (s) => col('35', s);
 const bold = (s) => col('1', s);
 
 const w = (s) => process.stdout.write(s);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function typeOut(s, ms = 16) {
+async function typeOut(s, ms = 14) {
   for (const ch of s) {
     w(ch);
     await sleep(ms);
@@ -30,45 +28,32 @@ const CLEAN = [
   'files. Parse the file in streamed chunks instead of loading it all into memory,',
   'show upload progress, and replace the generic "error" message with a meaningful',
   'one. Start by checking whether parsing is the bottleneck.',
-];
-
-const SPIN = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+].join('\n');
 
 export async function runDemo() {
   const cfg = loadConfig();
-  const ch = CHARACTERS[cfg.character] || CHARACTERS[DEFAULT_CHARACTER];
-
   w(ESC + '[2J' + ESC + '[H'); // clear screen
   w('\n  ' + bold(cyan('PetPrompt')) + dim('  ·  a cute pet that fixes your prompts') + '\n\n');
 
-  // 1) you fire off a messy prompt with the `pp ` prefix
+  // 1) you type a messy prompt with the `pp ` prefix (real)
   w('  ' + dim('›') + ' ');
-  await typeOut(MESSY, 14);
-  await sleep(450);
-  w('\n\n');
+  await typeOut(MESSY);
+  await sleep(500);
 
-  // 2) the pet thinks
-  const think = ch.states.think[0];
-  w('  ' + magenta(think[0]) + '\n');
-  for (let i = 0; i < 20; i++) {
-    w('\r  ' + magenta(think[1]) + '  ' + yellow(SPIN[i % SPIN.length] + ' thinking…'));
-    await sleep(70);
+  // 2) a brief beat while it rewrites (in real use, Claude Code spins here)
+  w('\n\n  ' + dim('· rewriting your prompt …'));
+  await sleep(1300);
+  w('\r' + ESC + '[K');
+
+  // 3) the EXACT card the hook shows (pet + rewrite + copied) — static, like the real thing
+  const card = renderRewriteCard({ optimized: CLEAN, copied: true, character: cfg.character });
+  for (const line of card.split('\n')) {
+    w('  ' + (line.startsWith('──') ? dim(line) : line) + '\n');
+    await sleep(45);
   }
-  w('\r' + ESC + '[K' + '  ' + magenta(think[1]) + '  ' + green('done') + '\n\n');
-  await sleep(300);
 
-  // 3) raw prompt blocked; clean rewrite shown + copied
-  w('  ' + yellow('✨ Optimized prompt') + dim(' — paste & Enter to run:') + '\n\n');
-  for (const line of CLEAN) {
-    w('  ' + line + '\n');
-    await sleep(280);
-  }
-  w('\n  ' + green('✓ copied to clipboard') + dim('   · your raw prompt was never sent') + '\n\n');
-  await sleep(450);
-
-  // 4) the pet celebrates
-  const done = ch.states.done[0];
-  w('  ' + magenta(done[0]) + '\n');
-  w('  ' + magenta(done[1]) + '  ' + green('refined!') + '\n\n');
+  // 4) you paste it and run it
+  await sleep(700);
+  w('\n  ' + dim('›') + ' In the CSV upload component, fix the hang …' + dim('  ⏎') + '\n');
   await sleep(1600);
 }

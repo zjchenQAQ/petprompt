@@ -7,7 +7,7 @@ import { loadConfig } from './config.js';
 import { writeState } from './state.js';
 import { optimize } from './optimize.js';
 import { copyToClipboard } from './clipboard.js';
-import { CHARACTERS, DEFAULT_CHARACTER } from './characters.js';
+import { renderRewriteCard } from './pet.js';
 import { t } from './i18n.js';
 
 function readStdin() {
@@ -84,19 +84,7 @@ export async function runHook() {
 
   if (trigger.apply === 'preview') {
     const copied = copyToClipboard(optimized);
-    // Bring the pet into the result so the real flow feels like the demo (cheering).
-    const ch = CHARACTERS[cfg.character] || CHARACTERS[DEFAULT_CHARACTER];
-    const pet = ch.states.done[0].slice();
-    pet[1] = pet[1] + '   ' + t('petRefined');
-    const reason = [
-      ...pet,
-      '',
-      t('previewTitle'),
-      '',
-      optimized,
-      '',
-      copied ? t('previewCopied') : t('previewManual'),
-    ].join('\n');
+    const reason = renderRewriteCard({ optimized, copied, character: cfg.character });
     // decision:block erases the raw prompt (it never reaches Claude) and shows `reason`.
     process.stdout.write(JSON.stringify({ decision: 'block', reason }));
     return;

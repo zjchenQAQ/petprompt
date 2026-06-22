@@ -37,3 +37,24 @@ export function renderPet(state, info = {}) {
   lines[lines.length - 1] += '  ' + label;
   return lines.join('\n');
 }
+
+// The "rewrite result card" — shown BOTH by the live hook (preview mode) and by the demo,
+// so the demo matches the real experience exactly. Plain text (Claude Code styles the hook
+// message itself) and CJK-safe (labelled rules, no fixed-width side borders).
+export function renderRewriteCard({ optimized, copied, character }) {
+  const ch = CHARACTERS[character] || CHARACTERS[DEFAULT_CHARACTER];
+  const pet = ch.states.done[0].slice();
+  pet[1] = pet[1] + '   ' + t('petRefined');
+  const rule = (label) => {
+    const head = '── ' + label + ' ';
+    return head + '─'.repeat(Math.max(3, 46 - head.length));
+  };
+  return [
+    ...pet,
+    rule(t('previewTitle')),
+    '',
+    optimized,
+    '',
+    rule(copied ? t('previewCopied') : t('previewManual')),
+  ].join('\n');
+}
