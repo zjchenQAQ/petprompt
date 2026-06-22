@@ -7,6 +7,7 @@ import { loadConfig } from './config.js';
 import { writeState } from './state.js';
 import { optimize } from './optimize.js';
 import { copyToClipboard } from './clipboard.js';
+import { CHARACTERS, DEFAULT_CHARACTER } from './characters.js';
 import { t } from './i18n.js';
 
 function readStdin() {
@@ -83,8 +84,14 @@ export async function runHook() {
 
   if (trigger.apply === 'preview') {
     const copied = copyToClipboard(optimized);
+    // Bring the pet into the result so the real flow feels like the demo (cheering).
+    const ch = CHARACTERS[cfg.character] || CHARACTERS[DEFAULT_CHARACTER];
+    const pet = ch.states.done[0].slice();
+    pet[1] = pet[1] + '   ' + t('petRefined');
     const reason = [
-      '✨ ' + t('previewTitle'),
+      ...pet,
+      '',
+      t('previewTitle'),
       '',
       optimized,
       '',
