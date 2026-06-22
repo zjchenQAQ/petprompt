@@ -12,7 +12,7 @@
 
 No API key. No separate chat. No copy-paste round-trips. It only acts when you ask it to.
 
-![PetPrompt demo](assets/demo.gif)
+![PetPrompt demo](assets/petprompt-demo.gif)
 
 </div>
 

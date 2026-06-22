@@ -1,10 +1,10 @@
 # Record the README GIF from PetPrompt's built-in demo.
 #   brew install vhs        # one-time (https://github.com/charmbracelet/vhs)
-#   vhs assets/demo.tape    # run from the repo root -> writes assets/demo.gif
+#   vhs assets/demo.tape    # run from the repo root -> writes assets/petprompt-demo.gif
 #
 # The demo is fully scripted (no claude, no network), so the GIF is deterministic.
 
-Output assets/demo.gif
+Output assets/petprompt-demo.gif
 
 Require node
 

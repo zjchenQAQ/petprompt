@@ -12,7 +12,7 @@
 
 无需 API key，无需另开对话，无需来回复制粘贴。只在你主动触发时才动手。
 
-![PetPrompt demo](assets/demo.gif)
+![PetPrompt demo](assets/petprompt-demo.gif)
 
 </div>
 

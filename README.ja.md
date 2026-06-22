@@ -12,7 +12,7 @@
 
 API キー不要。別のチャットも不要。コピペの往復もなし。あなたが頼んだときだけ動きます。
 
-![PetPrompt demo](assets/demo.gif)
+![PetPrompt demo](assets/petprompt-demo.gif)
 
 </div>
 
