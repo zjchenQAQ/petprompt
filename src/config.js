@@ -54,7 +54,12 @@ export const DEFAULT_CONFIG = {
 export function loadConfig() {
   try {
     if (existsSync(CONFIG_PATH)) {
-      return { ...DEFAULT_CONFIG, ...JSON.parse(readFileSync(CONFIG_PATH, 'utf8')) };
+      const cfg = { ...DEFAULT_CONFIG, ...JSON.parse(readFileSync(CONFIG_PATH, 'utf8')) };
+      // normalize critical fields so a hand-edited config can't break the hook
+      if (!Array.isArray(cfg.skipPatterns)) cfg.skipPatterns = DEFAULT_CONFIG.skipPatterns;
+      if (!Number.isFinite(cfg.minChars)) cfg.minChars = DEFAULT_CONFIG.minChars;
+      if (!Number.isFinite(cfg.minWords)) cfg.minWords = DEFAULT_CONFIG.minWords;
+      return cfg;
     }
   } catch {
     // fall through to defaults on any parse/read error

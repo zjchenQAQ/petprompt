@@ -6,7 +6,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 const DIR = join(homedir(), '.claude', 'petprompt');
 const STATE_PATH = join(DIR, 'state.json');
 
-// status: 'idle' | 'thinking' | 'done'
+// status: 'idle' | 'think' | 'done' | 'sleep' (keys must match pet.js / characters.js)
 export function writeState(status, extra = {}) {
   try {
     mkdirSync(DIR, { recursive: true });

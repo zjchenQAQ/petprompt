@@ -39,6 +39,10 @@ node src/cli.js init >/dev/null
 [ -z "$(hook "make the login page")" ] && pass "preview ignores un-marked" || bad "preview ignores un-marked"
 hook "pp make the login page" | grep -q '"decision":"block"' && pass "preview blocks raw on marker" || bad "preview blocks raw on marker"
 hook "pp make the login page" | grep -q 'Refined demo prompt' && pass "preview shows the rewrite" || bad "preview shows the rewrite"
+[ -z "$(hook "ppfix the login page")" ] && pass "preview ignores 'ppfix' (no space, H2)" || bad "preview ignores 'ppfix' (no space, H2)"
+node src/cli.js set marker '' >/dev/null 2>&1
+[ -z "$(hook "a normal sentence not a command")" ] && pass "empty marker does not hijack (H3)" || bad "empty marker does not hijack (H3)"
+node src/cli.js set marker 'pp ' >/dev/null 2>&1
 
 # auto mode: inject as additionalContext, skip trivial
 mode auto
@@ -50,6 +54,7 @@ mode preview
 node src/cli.js pet cat >/dev/null && node src/cli.js config | grep -E '^[[:space:]]+character' | grep -q cat && pass "pet selects character" || bad "pet selects character"
 node src/cli.js pet nope 2>/dev/null && bad "pet rejects unknown character" || pass "pet rejects unknown character"
 node src/cli.js pet | grep -q "PetPrompt characters" && pass "pet lists characters" || bad "pet lists characters"
+node src/cli.js set minWords abc 2>/dev/null && bad "set rejects non-number (M1)" || pass "set rejects non-number (M1)"
 
 # statusline renders the chosen character (multi-line)
 echo '{"status":"idle","ts":0}' > "$HOME/.claude/petprompt/state.json"
@@ -62,6 +67,10 @@ node src/cli.js help | grep -q "可爱桌宠" && pass "lang zh localizes help" |
 node src/cli.js lang auto >/dev/null
 LANG=ja_JP.UTF-8 node src/cli.js help | grep -q "ペット" && pass "auto-detects ja from \$LANG" || bad "auto-detects ja from \$LANG"
 node src/cli.js lang en >/dev/null
+
+# H1: the 'think' state must actually render (status key matches pet.js)
+echo '{"status":"think","ts":1}' > "$HOME/.claude/petprompt/state.json"
+echo '{}' | node src/cli.js statusline | grep -q 'refining' && pass "think state renders (H1)" || bad "think state renders (H1)"
 
 node src/cli.js uninstall >/dev/null
 grep -q statusLine "$SETTINGS" && bad "uninstall removes statusline" || pass "uninstall removes statusline"

@@ -74,11 +74,20 @@ function setKey(key, raw) {
     console.error(C.dim(t('validKeys') + ': ' + Object.keys(DEFAULT_CONFIG).join(', ')));
     process.exit(1);
   }
-  const cfg = loadConfig();
   const def = DEFAULT_CONFIG[key];
+  if (Array.isArray(def) || (def && typeof def === 'object')) {
+    console.error(C.red(`Edit "${key}" directly in the config file: `) + CONFIG_PATH);
+    process.exit(1);
+  }
+  const cfg = loadConfig();
   let value = raw;
-  if (typeof def === 'number') value = Number(raw);
-  else if (typeof def === 'boolean') value = raw === 'true' || raw === '1';
+  if (typeof def === 'number') {
+    value = Number(raw);
+    if (!Number.isFinite(value)) {
+      console.error(C.red(`"${key}" must be a number, got: ${raw}`));
+      process.exit(1);
+    }
+  } else if (typeof def === 'boolean') value = raw === 'true' || raw === '1';
   cfg[key] = value;
   saveConfig(cfg);
   console.log(C.green('✓') + ` ${key} = ${JSON.stringify(value)}`);

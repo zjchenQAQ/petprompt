@@ -27,9 +27,14 @@ function decideTrigger(rawPrompt, cfg) {
   if (cfg.mode === 'off' || cfg.mode === 'manual') return null;
 
   if (cfg.mode === 'preview') {
-    const marker = cfg.marker || 'pp ';
-    if (!p.startsWith(marker.trim())) return null;
-    return { apply: 'preview', text: rawPrompt.replace(/^\s*/, '').slice(marker.length) };
+    const marker = (cfg.marker || 'pp ').trim();
+    if (!marker) return null; // an empty marker must NOT hijack every prompt (H3)
+    const esc = marker.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // require the marker as its own leading word + whitespace, then strip exactly that.
+    // (so "ppfix" does NOT trigger, and we never drop a real character — H2)
+    const m = rawPrompt.match(new RegExp('^\\s*' + esc + '\\s+'));
+    if (!m) return null;
+    return { apply: 'preview', text: rawPrompt.slice(m[0].length) };
   }
 
   if (cfg.mode === 'auto') {
@@ -62,7 +67,7 @@ export async function runHook() {
   const trigger = decideTrigger(input.prompt, cfg);
   if (!trigger || !trigger.text.trim()) return;
 
-  writeState('thinking');
+  writeState('think'); // must match the state key used by pet.js / characters.js (H1)
   let optimized = null;
   try {
     optimized = await optimize({
@@ -93,7 +98,7 @@ export async function runHook() {
   // auto: inject the rewrite for Claude, and show it to the user.
   const additionalContext = [
     "[PetPrompt] Below is the user's prompt, rephrased to follow prompt-engineering best practices.",
-    "It has the SAME meaning, scope, and language — only the wording is clearer. Treat it as the user's actual request; if the literal prompt above is less clear, prefer this version. Reply in the same language as the prompt. Do not mention this note in your reply.",
+    "It has the SAME meaning, scope, and language — only the wording is clearer. Treat it as the user's actual request; if the user's literal prompt is less clear, prefer this version. Reply in the same language as the prompt. Do not mention this note in your reply.",
     '',
     optimized,
   ].join('\n');
