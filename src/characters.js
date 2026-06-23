@@ -10,8 +10,12 @@
 
 export const CHARACTERS = {
   shiba: {
-    name: '柴犬 Shiba',
-    blurb: 'loyal pup; wags its tail, ears flop when sleepy',
+    name: { en: 'Shiba', zh: '柴犬', ja: '柴犬' },
+    blurb: {
+      en: 'loyal pup; wags its tail',
+      zh: '忠诚的小狗，会摇尾巴',
+      ja: '忠実な子犬。しっぽを振る',
+    },
     states: {
       idle: [
         ['U     U', '( ◕ᴥ◕ )', ' \\___/'],
@@ -31,8 +35,12 @@ export const CHARACTERS = {
   },
 
   cat: {
-    name: '猫 Cat',
-    blurb: 'aloof; flicks an ear, purrs when it cares',
+    name: { en: 'Cat', zh: '猫', ja: '猫' },
+    blurb: {
+      en: 'aloof, but secretly cares',
+      zh: '高冷，但其实很在意你',
+      ja: 'クールだけど実は気にかけている',
+    },
     states: {
       idle: [
         ['/\\_/\\', '( o.o )', ' > ^ <'],
@@ -52,8 +60,12 @@ export const CHARACTERS = {
   },
 
   bunny: {
-    name: '兔子 Bunny',
-    blurb: 'shy; ears perk up, hops when happy',
+    name: { en: 'Bunny', zh: '兔子', ja: '兎' },
+    blurb: {
+      en: 'shy; hops when happy',
+      zh: '害羞，开心时蹦跶',
+      ja: '内気で、嬉しいと跳ねる',
+    },
     states: {
       idle: [
         ['(\\_/)', '( •ᴥ• )', 'c(")(")'],
@@ -73,8 +85,12 @@ export const CHARACTERS = {
   },
 
   slime: {
-    name: '史莱姆 Slime',
-    blurb: 'gooey blob; squishes, jiggles with joy',
+    name: { en: 'Slime', zh: '史莱姆', ja: 'スライム' },
+    blurb: {
+      en: 'gooey blob; squishes with joy',
+      zh: '弹弹的史莱姆，会一缩一缩',
+      ja: 'ぷるぷる、すぐ喜ぶ',
+    },
     states: {
       idle: [
         [' ╭───╮', '( ˘ ᵕ ˘ )', ' ╰───╯'],
@@ -94,8 +110,12 @@ export const CHARACTERS = {
   },
 
   fox: {
-    name: '狐狸 Fox',
-    blurb: 'sly; sharp ears, swishes its tail',
+    name: { en: 'Fox', zh: '狐狸', ja: '狐' },
+    blurb: {
+      en: 'sly; swishes its tail',
+      zh: '狡黠机灵，会甩尾巴',
+      ja: 'ずる賢く、しっぽを振る',
+    },
     states: {
       idle: [
         ['▲     ▲', '( ◔ ω ◔ )', ' ╰─~──╯'],

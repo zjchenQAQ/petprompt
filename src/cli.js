@@ -8,7 +8,7 @@ import { readFileSync, writeFileSync, existsSync, copyFileSync, mkdirSync } from
 import { loadConfig, saveConfig, DEFAULT_CONFIG, CONFIG_PATH } from './config.js';
 import { readState } from './state.js';
 import { optimize } from './optimize.js';
-import { t, helpText, LANGS } from './i18n.js';
+import { t, helpText, LANGS, detectLang } from './i18n.js';
 import { CHARACTERS, characterKeys } from './characters.js';
 import { renderPet } from './pet.js';
 
@@ -234,9 +234,13 @@ function doPet(args) {
 
   const cfg = loadConfig();
   console.log(C.b('PetPrompt characters') + C.dim('  (current: ' + cfg.character + ')'));
+  const lang = detectLang();
   for (const k of characterKeys()) {
     const cur = k === cfg.character ? C.green('  ◀ current') : '';
-    console.log('\n' + C.cyan(k) + C.dim('  ' + CHARACTERS[k].name + ' — ' + CHARACTERS[k].blurb) + cur);
+    const ch = CHARACTERS[k];
+    const nm = ch.name[lang] || ch.name.en;
+    const bl = ch.blurb[lang] || ch.blurb.en;
+    console.log('\n' + C.cyan(k) + C.dim('  ' + nm + ' — ' + bl) + cur);
     console.log(renderPet({ status: 'idle', ts: Date.now() }, { character: k }));
   }
   console.log(C.dim('\n  petprompt pet <name>    choose a character'));

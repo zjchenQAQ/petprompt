@@ -87,11 +87,11 @@ petprompt pet on | off     # show / hide the statusline pet
 
 | Key | Character |
 | --- | --- |
-| `shiba` *(default)* | 柴犬 — loyal, a little smug; wags its tail |
-| `cat` | 猫 — aloof, but secretly cares |
-| `slime` | 史莱姆 — bouncy, easily delighted; squishes |
-| `fox` | 狐狸 — sly and quick-witted |
-| `bunny` | 兔子 — shy; hops when happy |
+| `shiba` *(default)* | Shiba — loyal pup; wags its tail |
+| `cat` | Cat — aloof, but secretly cares |
+| `slime` | Slime — bouncy, easily delighted |
+| `fox` | Fox — sly and quick-witted |
+| `bunny` | Bunny — shy; hops when happy |
 
 ## Install
 
